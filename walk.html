@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  height: 2000px;
+  background: #bebe70a8;
+}
+
+#txt {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+#txt h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+#txt p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+#mySVG {
+  position: fixed;
+  top: 15%;
+  width: 400px;
+  height: 210px;
+  margin-left: 0;
+  transition: margin-left 0.5s ease-out;
+}
+</style>
+</head>
+<body>
+
+<text id="txt">
+<h2>Scroll down this window to draw an image.</h2>
+<p>Scroll back up to reverse the drawing.</p>
+</text>
+
+<svg id="mySVG">
+  <path fill="none" stroke="red" stroke-width="3" id="triangle" d="M76.13,23.25c-5.05,0 -9.14,4.09 -9.14,9.14c0,5.05 4.1,9.14 9.14,9.14c5.05,0 9.14,-4.09 9.14,-9.14c0,-5.05 -4.09,-9.14 -9.14,-9.14zM66.57,44.86c-9.25,3.46 -16.39,9.34 -16.47,19.12c0,2.5 2.03,4.53 4.53,4.53c2.5,0 4.53,-2.03 4.53,-4.53c0.08,-2.5 1.13,-4.62 2.68,-6.32c0.05,2.23 0.4,4.73 1.17,7.5c-0.47,0.79 -0.67,1.97 -0.48,3.7c-1.6,9.21 -11.75,15.2 -18.29,18.17c-2.29,1.02 -3.32,3.7 -2.3,5.99c1.02,2.29 3.7,3.32 5.99,2.3c8.68,-4.52 19.73,-11.82 22.91,-21.39c7.21,3.36 13.96,10.92 15.18,17.89c0.35,2.48 2.65,4.2 5.13,3.85c2.48,-0.35 4.2,-2.65 3.85,-5.13c-1.88,-11.19 -9.61,-19.47 -19.24,-24.32c-2.79,-1.2 -3.01,-7.71 -2.86,-10.06c8.46,4.8 17.12,6.94 25.7,2.73c2.24,-1.12 3.15,-3.84 2.03,-6.08c-1.12,-2.24 -3.84,-3.15 -6.08,-2.03c-10.08,4.98 -16.36,-2.65 -21.67,-5.74c-1.9,-1.33 -4.42,-1.33 -6.31,-0.17z" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<script>
+// Get the path element and the length of the path
+var triangle = document.getElementById("triangle");
+var length = triangle.getTotalLength();
+
+// The start position of the drawing
+triangle.style.strokeDasharray = length;
+triangle.style.strokeDashoffset = length;
+
+// Set the initial position of the SVG
+var mySVG = document.getElementById("mySVG");
+mySVG.style.marginLeft = "0px";
+
+// Function to handle scroll event
+window.onscroll = function() {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var txt = document.getElementById('txt');
+    var maxOpacity = 1;
+    var minOpacity = 0.1;
+    var totalScroll = 400;
+
+    var opacity = 1 - scrollTop / totalScroll;
+    if (opacity < minOpacity) opacity = minOpacity;
+    if (opacity > maxOpacity) opacity = maxOpacity;
+    txt.style.opacity = opacity;
+
+    // Calculate the scroll percentage
+    var scrollpercent = (document.body.scrollTop + document.documentElement.scrollTop) / (document.documentElement.scrollHeight - document.documentElement.clientHeight);
+    var draw = length * scrollpercent;
+    
+    // Reverse the drawing when scrolling upwards
+    triangle.style.strokeDashoffset = length - draw;
+
+    // Animate the movement of the SVG across the page
+    var maxDistance = window.innerWidth - 400; // Adjust width according to screen size
+    var newPosition = scrollpercent * maxDistance; // Calculate new position
+    mySVG.style.marginLeft = newPosition + "px"; // Update the margin-left
+};
+</script>
+
+</body>
+</html>
